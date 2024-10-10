@@ -42,7 +42,7 @@ class MainPage extends ConsumerWidget {
       backgroundColor: Colors.grey[200], // Set the main background to greyish white
       body: Row(
         children: [
-          const SidebarWidget(),
+          SidebarWidget(),
           Expanded(
             child: Container(
               color: Colors.white,

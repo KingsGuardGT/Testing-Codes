@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:testing/table/table_notifier.dart';
 import 'package:testing/notifier/responsive_utils.dart';
+import '../notifier/products_notifier.dart';
 
 class TableTesting extends ConsumerStatefulWidget {
   const TableTesting({super.key, required this.title});
@@ -12,24 +13,25 @@ class TableTesting extends ConsumerStatefulWidget {
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
   @override
-  _CustomTableState createState() => _CustomTableState();
+  CustomTableState createState() => CustomTableState();
 }
 
-class _CustomTableState extends ConsumerState<TableTesting> {
+class CustomTableState extends ConsumerState<TableTesting> {
   final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
   final Map<int, bool> _expandedRows = {};
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(productNotifierProvider.notifier).fetchProducts().then((_) {
+      ref.read(dataTableNotifierProvider.notifier).initializeProducts();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(dataTableNotifierProvider);
     final notifier = ref.read(dataTableNotifierProvider.notifier);
-
-    // Filter data based on search query
-    final filteredData = state.products.where((product) {
-      return product.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          product.description!.toLowerCase().contains(_searchQuery.toLowerCase());
-    }).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -64,9 +66,7 @@ class _CustomTableState extends ConsumerState<TableTesting> {
                         ),
                         style: TextStyle(color: Colors.grey[600]),
                         onChanged: (query) {
-                          setState(() {
-                            _searchQuery = query;
-                          });
+                          notifier.setSearchQuery(query);
                         },
                       ),
                     ),
@@ -129,7 +129,7 @@ class _CustomTableState extends ConsumerState<TableTesting> {
                     ),
                     child: ResponsiveUtils.isMobile(context)
                         ? Column(
-                      children: filteredData.map((product) {
+                      children: notifier.filteredProducts.map((product) {
                         final creationDate = product.creationAt != null
                             ? DateFormat('dd-MM-yy').format(product.creationAt!)
                             : '';
@@ -216,7 +216,7 @@ class _CustomTableState extends ConsumerState<TableTesting> {
                           ),
                         ),
                       ],
-                      rows: filteredData.map((product) {
+                      rows: notifier.filteredProducts.map((product) {
                         final creationDate = product.creationAt != null
                             ? DateFormat('dd-MM-yy').format(product.creationAt!)
                             : '';

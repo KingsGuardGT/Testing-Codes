@@ -1,27 +1,19 @@
 // lib/table/table_notifier.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:testing/notifier/product_repository.dart';
 import 'package:testing/table/table_state.dart';
-import '../notifier/dio.dart';
+import '../notifier/products_notifier.dart';
 import '../sidebar/model/product.dart';
 
 class TableNotifier extends StateNotifier<TableState> {
-  final ProductRepository _productRepository;
+  final ProductNotifier _productNotifier;
 
-  TableNotifier(this._productRepository) : super(TableState(products: [], selected: [])) {
-    _fetchProducts();
+  TableNotifier(this._productNotifier) : super(const TableState(products: [], selected: [], searchQuery: '')) {
+    initializeProducts();
   }
 
-  Future<void> _fetchProducts() async {
-    try {
-      final products = await _productRepository.fetchProducts();
-      state = state.copyWith(
-        products: products,
-        selected: List<bool>.generate(products.length, (index) => false),
-      );
-    } catch (error) {
-      // Handle error
-    }
+  void initializeProducts() {
+    final products = _productNotifier.products;
+    state = state.copyWith(products: products, selected: List<bool>.filled(products.length, false));
   }
 
   void setSelectedIndex(int index, bool value) {
@@ -34,8 +26,23 @@ class TableNotifier extends StateNotifier<TableState> {
     final sortedProducts = List<Product>.from(state.products)..sort(comparator);
     state = state.copyWith(products: sortedProducts);
   }
+
+  void setSearchQuery(String query) {
+    state = state.copyWith(searchQuery: query);
+  }
+
+  List<Product> get filteredProducts {
+    return state.products.where((product) {
+      return product.title.toLowerCase().contains(state.searchQuery.toLowerCase()) ||
+          product.description!.toLowerCase().contains(state.searchQuery.toLowerCase());
+    }).toList();
+  }
 }
 
+// lib/table/table_notifier.dart
 final dataTableNotifierProvider = StateNotifierProvider<TableNotifier, TableState>(
-      (ref) => TableNotifier(ref.watch(productRepositoryProvider)),
+      (ref) {
+    final productNotifier = ref.watch(productNotifierProvider.notifier);
+    return TableNotifier(productNotifier);
+  },
 );

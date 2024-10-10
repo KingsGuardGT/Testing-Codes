@@ -1,15 +1,16 @@
+// lib/sidebar/sidebar_notifier.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:testing/sidebar/sidebar_state.dart';
 
 class SidebarNotifier extends StateNotifier<SidebarState> {
-  SidebarNotifier() : super(SidebarState());
+  SidebarNotifier() : super(const SidebarState());
 
   void setSelectedIndex(int index) {
-    state = state.copyWith(selectedIndex: index);
+    state = SidebarState(selectedIndex: index, isCollapsed: state.isCollapsed);
   }
 
   void toggleIsCollapsed() {
-    state = state.copyWith(isCollapsed: !state.isCollapsed);
+    state = SidebarState(selectedIndex: state.selectedIndex, isCollapsed: !state.isCollapsed);
   }
 }
 

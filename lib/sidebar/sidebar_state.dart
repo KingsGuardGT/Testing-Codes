@@ -1,15 +1,12 @@
 // lib/sidebar/provider/sidebar_state.dart
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class SidebarState {
-  final int selectedIndex;
-  final bool isCollapsed;
+part 'sidebar_state.freezed.dart';
 
-  SidebarState({this.selectedIndex = 0, this.isCollapsed = true});
-
-  SidebarState copyWith({int? selectedIndex, bool? isCollapsed}) {
-    return SidebarState(
-      selectedIndex: selectedIndex ?? this.selectedIndex,
-      isCollapsed: isCollapsed ?? this.isCollapsed,
-    );
-  }
+@freezed
+class SidebarState with _$SidebarState {
+  const factory SidebarState({
+    @Default(0) int selectedIndex,
+    @Default(true) bool isCollapsed,
+  }) = _SidebarState;
 }

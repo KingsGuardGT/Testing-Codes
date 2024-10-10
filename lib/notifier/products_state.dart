@@ -1,46 +1,19 @@
-
+// lib/notifier/products_state.dart
+import 'package:freezed_annotation/freezed_annotation.dart';
 import '../sidebar/model/product.dart';
 
-class ProductsState {
-  final List<Product> products;
-  final List<Product> sortedProducts;
-  final Product? currentProduct;
-  final int? currentIndex;
-  final bool isSorting;
-  final String errorMessage;
-  final int sortColumnIndex;
-  final bool sortAscending;
+part 'products_state.freezed.dart';
 
-  ProductsState({
-    this.products = const [],
-    this.sortedProducts = const [],
-    this.currentProduct,
-    this.currentIndex,
-    this.isSorting = false,
-    this.errorMessage = '',
-    this.sortColumnIndex = 0,
-    this.sortAscending = true,
-  });
-
-  ProductsState copyWith({
-    List<Product>? products,
-    List<Product>? sortedProducts,
+@freezed
+class ProductsState with _$ProductsState {
+  const factory ProductsState({
+    @Default([]) List<Product> products,
+    @Default([]) List<Product> sortedProducts,
     Product? currentProduct,
     int? currentIndex,
-    bool? isSorting,
-    String? errorMessage,
-    int? sortColumnIndex,
-    bool? sortAscending,
-  }) {
-    return ProductsState(
-      products: products ?? this.products,
-      sortedProducts: sortedProducts ?? this.sortedProducts,
-      currentProduct: currentProduct ?? this.currentProduct,
-      currentIndex: currentIndex ?? this.currentIndex,
-      isSorting: isSorting ?? this.isSorting,
-      errorMessage: errorMessage ?? this.errorMessage,
-      sortColumnIndex: sortColumnIndex ?? this.sortColumnIndex,
-      sortAscending: sortAscending ?? this.sortAscending,
-    );
-  }
+    @Default(false) bool isSorting,
+    @Default('') String errorMessage,
+    @Default(0) int sortColumnIndex,
+    @Default(true) bool sortAscending,
+  }) = _ProductsState;
 }

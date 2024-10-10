@@ -1,9 +1,15 @@
-class DrawerImages {
-  final String title;
-  final String? imagePath;
+// lib/sidebar/model/drawer_model.dart
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const DrawerImages({
-    required this.title,
-    this.imagePath,
-  });
+part 'drawer_model.freezed.dart';
+part 'drawer_model.g.dart';
+
+@freezed
+class DrawerImages with _$DrawerImages {
+  const factory DrawerImages({
+    required String title,
+    String? imagePath,
+  }) = _DrawerImages;
+
+  factory DrawerImages.fromJson(Map<String, dynamic> json) => _$DrawerImagesFromJson(json);
 }

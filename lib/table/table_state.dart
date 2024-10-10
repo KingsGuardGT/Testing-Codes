@@ -1,16 +1,14 @@
 // lib/table/table_state.dart
+import 'package:freezed_annotation/freezed_annotation.dart';
 import '../sidebar/model/product.dart';
 
-class TableState {
-  final List<Product> products;
-  final List<bool> selected;
+part 'table_state.freezed.dart';
 
-  TableState({required this.products, required this.selected});
-
-  TableState copyWith({List<Product>? products, List<bool>? selected}) {
-    return TableState(
-      products: products ?? this.products,
-      selected: selected ?? this.selected,
-    );
-  }
+@freezed
+class TableState with _$TableState {
+  const factory TableState({
+    @Default([]) List<Product> products,
+    @Default([]) List<bool> selected,
+    @Default('') String searchQuery,
+  }) = _TableState;
 }

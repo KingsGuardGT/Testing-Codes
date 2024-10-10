@@ -4,13 +4,13 @@ import '../sidebar/model/product.dart';
 
 
 class ProductRepository {
-  final Dio _dio;
+  final Dio dio;
 
-  ProductRepository(this._dio);
+  ProductRepository(this.dio);
 
   Future<List<Product>> fetchProducts({int page = 1, int limit = 20}) async {
     try {
-      final response = await _dio.get(
+      final response = await dio.get(
         'https://api.escuelajs.co/api/v1/products',
         queryParameters: {
           'page': page,
