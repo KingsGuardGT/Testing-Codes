@@ -8,9 +8,7 @@ import 'dio.dart';
 class ProductNotifier extends StateNotifier<ProductsState> {
   final ProductRepository _productRepository;
 
-  ProductNotifier(this._productRepository) : super(const ProductsState()) {
-    fetchProducts();
-  }
+  ProductNotifier(this._productRepository) : super(const ProductsState());
 
   Future<void> fetchProducts() async {
     try {

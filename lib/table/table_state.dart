@@ -1,14 +1,13 @@
-// lib/table/table_state.dart
-import 'package:freezed_annotation/freezed_annotation.dart';
-import '../sidebar/model/product.dart';
+import 'package:freezed_annotation/freezed_annotation.dart'; // Importing Freezed for immutable state management.
+import '../sidebar/model/product.dart'; // Importing the Product model.
 
-part 'table_state.freezed.dart';
+part 'table_state.freezed.dart'; // Part directive for code generation.
 
 @freezed
-class TableState with _$TableState {
+class TableState with _$TableState { // Defining an immutable state class using Freezed.
   const factory TableState({
-    @Default([]) List<Product> products,
-    @Default([]) List<bool> selected,
-    @Default('') String searchQuery,
+    @Default([]) List<Product> products, // List of products, defaulting to an empty list.
+    @Default([]) List<bool> selected, // List of selection states, defaulting to an empty list.
+    @Default('') String searchQuery, // Search query, defaulting to an empty string.
   }) = _TableState;
 }
