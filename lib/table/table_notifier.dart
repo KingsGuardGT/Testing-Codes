@@ -1,4 +1,3 @@
-// lib/table/table_notifier.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:testing/table/table_state.dart';
 import '../notifier/products_notifier.dart';
@@ -11,9 +10,9 @@ final dataTableNotifierProvider = StateNotifierProvider<TableNotifier, TableStat
   },
 );
 
-// lib/table/table_notifier.dart
 class TableNotifier extends StateNotifier<TableState> {
   final ProductNotifier _productNotifier;
+  List<Product> _initialProducts = []; // Add a variable to store initial fetched products
 
   TableNotifier(this._productNotifier) : super(const TableState(products: [], selected: [], searchQuery: '')) {
     initializeTableProducts();
@@ -21,6 +20,7 @@ class TableNotifier extends StateNotifier<TableState> {
 
   void initializeTableProducts() {
     final products = _productNotifier.products;
+    _initialProducts = products; // Store the initial fetched products
     state = state.copyWith(products: products, selected: List<bool>.filled(products.length, false));
   }
 
@@ -41,18 +41,22 @@ class TableNotifier extends StateNotifier<TableState> {
   }
 
   void setSearchQuery(String query) {
-    state = state.copyWith(searchQuery: query);
+    state = state.copyWith(searchQuery: ''); // Clear the search bar
+    if (query.isEmpty) {
+      state = state.copyWith(products: _initialProducts); // Reset to initial fetched products
+    } else {
+      state = state.copyWith(products: _initialProducts.where((product) {
+        final priceString = product.price.toString();
+        final priceWithDollar = '\$${product.price}';
+        return product.title.toLowerCase().contains(query.toLowerCase()) ||
+            (product.description?.toLowerCase().contains(query.toLowerCase()) ?? false) ||
+            priceString.contains(query) ||
+            priceWithDollar.contains(query);
+      }).toList());
+    }
   }
 
   List<Product> get filteredProducts {
-    final query = state.searchQuery.toLowerCase();
-    return state.products.where((product) {
-      final priceString = product.price.toString();
-      final priceWithDollar = '\$${product.price}';
-      return product.title.toLowerCase().contains(query) ||
-          (product.description?.toLowerCase().contains(query) ?? false) ||
-          priceString.contains(query) ||
-          priceWithDollar.contains(query);
-    }).toList();
+    return state.products;
   }
 }

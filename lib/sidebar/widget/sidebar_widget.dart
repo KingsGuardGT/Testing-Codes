@@ -16,30 +16,41 @@ class SidebarWidget extends ConsumerWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
-      width: sidebarState.isCollapsed ? MediaQuery.of(context).size.width * 0.05 : MediaQuery.of(context).size.width * 0.2,
+      width: sidebarState.isCollapsed
+          ? MediaQuery.of(context).size.width * 0.05
+          : MediaQuery.of(context).size.width * 0.2,
       child: Drawer(
         child: Container(
           color: Colors.white,
           child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 24).add(MediaQuery.of(context).padding),
+                padding: const EdgeInsets.symmetric(vertical: 24)
+                    .add(MediaQuery.of(context).padding),
                 width: double.infinity,
                 color: Colors.white,
                 child: buildHeader(context, sidebarState.isCollapsed),
               ),
               const SizedBox(height: 24),
+              // Use Expanded with ListView to avoid layout issues.
               Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      buildList(context, items: itemsFirst, isCollapsed: sidebarState.isCollapsed),
-                      const SizedBox(height: 24),
-                    ],
-                  ),
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    buildList(
+                      context,
+                      items: itemsFirst,
+                      isCollapsed: sidebarState.isCollapsed,
+                    ),
+                    const SizedBox(height: 24),
+                  ],
                 ),
               ),
-              buildCollapseIcon(context, sidebarNotifier, sidebarState.isCollapsed),
+              buildCollapseIcon(
+                context,
+                sidebarNotifier,
+                sidebarState.isCollapsed,
+              ),
               const SizedBox(height: 12),
             ],
           ),
@@ -48,11 +59,15 @@ class SidebarWidget extends ConsumerWidget {
     );
   }
 
-  Widget buildList(BuildContext context, {required bool isCollapsed, required List<DrawerImages> items, int indexOffset = 0}) {
+  Widget buildList(BuildContext context,
+      {required bool isCollapsed,
+        required List<DrawerImages> items,
+        int indexOffset = 0}) {
     return ListView.separated(
       padding: isCollapsed ? EdgeInsets.zero : const EdgeInsets.all(16),
-      shrinkWrap: true,
+      shrinkWrap: true, // Ensure this ListView doesn't expand indefinitely.
       primary: false,
+      physics: const NeverScrollableScrollPhysics(), // Disable inner scrolling.
       itemCount: items.length,
       separatorBuilder: (context, index) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
@@ -69,14 +84,20 @@ class SidebarWidget extends ConsumerWidget {
   }
 
   void selectItem(BuildContext context, int index) {
-    // Implement navigation logic here
+    // Implement navigation logic here.
   }
 
-  Widget buildMenuItem(BuildContext context, {required bool isCollapsed, required String text, String? imagePath, VoidCallback? onClicked}) {
+  Widget buildMenuItem(BuildContext context,
+      {required bool isCollapsed,
+        required String text,
+        String? imagePath,
+        VoidCallback? onClicked}) {
     const color = Colors.black;
     final leading = SizedBox(
       width: isCollapsed ? 20 : 30,
-      child: imagePath != null ? Image.asset(imagePath, width: 20, height: 20) : null,
+      child: imagePath != null
+          ? Image.asset(imagePath, width: 20, height: 20)
+          : null,
     );
 
     return Material(
@@ -87,7 +108,9 @@ class SidebarWidget extends ConsumerWidget {
           padding: EdgeInsets.symmetric(vertical: isCollapsed ? 4 : 8),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: isCollapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
+            mainAxisAlignment: isCollapsed
+                ? MainAxisAlignment.center
+                : MainAxisAlignment.start,
             children: [
               leading,
               if (!isCollapsed) const SizedBox(width: 8),
@@ -107,7 +130,8 @@ class SidebarWidget extends ConsumerWidget {
     );
   }
 
-  Widget buildCollapseIcon(BuildContext context, SidebarNotifier sidebarNotifier, bool isCollapsed) {
+  Widget buildCollapseIcon(
+      BuildContext context, SidebarNotifier sidebarNotifier, bool isCollapsed) {
     const double size = 52;
     final alignment = isCollapsed ? Alignment.center : Alignment.centerRight;
     final margin = isCollapsed ? null : const EdgeInsets.only(right: 16);

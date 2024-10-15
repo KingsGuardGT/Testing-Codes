@@ -1,4 +1,3 @@
-// lib/table/table.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -92,6 +91,11 @@ class CustomTableState extends ConsumerState<TableTesting> {
                           });
                         }
                       },
+                      onChanged: (query) {
+                        if (query.isEmpty) {
+                          notifier.setSearchQuery(query);
+                        }
+                      },
                     ),
                   ),
                   Wrap(
@@ -102,7 +106,6 @@ class CustomTableState extends ConsumerState<TableTesting> {
                         onDeleted: () {
                           setState(() {
                             _filters.remove(filter);
-                            notifier.setSearchQuery(_searchController.text);
                           });
                         },
                       );
@@ -213,101 +216,148 @@ class CustomTableState extends ConsumerState<TableTesting> {
                         );
                       }).toList(),
                     )
-                        : DataTable(
-                      headingRowColor: WidgetStateProperty.all(Colors.grey[300]),
-                      headingTextStyle: const TextStyle(color: Colors.black),
-                      columns: const <DataColumn>[
-                        DataColumn(
-                          label: Expanded(
-                            child: Text(
-                              'Title',
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Expanded(
-                            child: Text(
-                              'Price',
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Expanded(
-                            child: Text(
-                              'Description',
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Expanded(
-                            child: Text(
-                              'Creation Date',
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Expanded(
-                            child: Text(
-                              'Update Date',
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                          ),
-                        ),
-                      ],
-                      rows: notifier.filteredProducts.map((product) {
-                        final creationDate = product.creationAt != null
-                            ? DateFormat('dd-MM-yy').format(product.creationAt!)
-                            : '';
-                        final updateDate = product.updatedAt != null
-                            ? DateFormat('dd-MM-yy').format(product.updatedAt!)
-                            : '';
+                        : LayoutBuilder(
+                      builder: (context, constraints) {
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                            child: DataTable(
+                              headingRowColor: WidgetStateProperty.all(Colors.grey[300]),
+                              headingTextStyle: const TextStyle(color: Colors.black),
+                              columns: <DataColumn>[
+                                DataColumn(
+                                  label: ConstrainedBox(
+                                    constraints: const BoxConstraints(maxWidth: 60), // Fixed width for Title
+                                    child: const Text(
+                                      'Title',
+                                      style: TextStyle(fontStyle: FontStyle.normal),
+                                    ),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: ConstrainedBox(
+                                    constraints: const BoxConstraints(maxWidth: 40), // Fixed width for Price
+                                    child: const Text(
+                                      'Price',
+                                      style: TextStyle(fontStyle: FontStyle.normal),
+                                    ),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: ConstrainedBox(
+                                    constraints: const BoxConstraints(maxWidth: 600), // Fixed width for Description
+                                    child: const Text(
+                                      'Description',
+                                      style: TextStyle(fontStyle: FontStyle.normal),
+                                    ),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: ConstrainedBox(
+                                    constraints: const BoxConstraints(maxWidth: 100), // Fixed width for Creation Date
+                                    child: const Text(
+                                      'Creation Date',
+                                      style: TextStyle(fontStyle: FontStyle.normal),
+                                    ),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: ConstrainedBox(
+                                    constraints: const BoxConstraints(maxWidth: 100), // Fixed width for Update Date
+                                    child: const Text(
+                                      'Update Date',
+                                      style: TextStyle(fontStyle: FontStyle.normal),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              rows: notifier.filteredProducts.map((product) {
+                                final creationDate = product.creationAt != null
+                                    ? DateFormat('dd-MM-yy').format(product.creationAt!)
+                                    : '';
+                                final updateDate = product.updatedAt != null
+                                    ? DateFormat('dd-MM-yy').format(product.updatedAt!)
+                                    : '';
 
-                        return DataRow(
-                          color: WidgetStateProperty.resolveWith<Color?>(
-                                (Set<WidgetState> states) {
-                              if (states.contains(WidgetState.selected)) {
-                                return Theme.of(context).colorScheme.primary.withOpacity(0.08);
-                              }
-                              return null;
-                            },
+                                return DataRow(
+                                  color: WidgetStateProperty.resolveWith<Color?>(
+                                        (Set<WidgetState> states) {
+                                      if (states.contains(WidgetState.selected)) {
+                                        return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  cells: <DataCell>[
+                                    DataCell(
+                                      ConstrainedBox(
+                                        constraints: const BoxConstraints(maxWidth: 150), // Fixed width for Title
+                                        child: Text(
+                                          product.title,
+                                          style: const TextStyle(fontSize: 12), // Reduced font size
+                                        ),
+                                      ),
+                                    ),
+                                    DataCell(
+                                      ConstrainedBox(
+                                        constraints: const BoxConstraints(maxWidth: 100), // Fixed width for Price
+                                        child: Text(
+                                          '\$${product.price.toString()}',
+                                          style: const TextStyle(fontSize: 12), // Reduced font size
+                                        ),
+                                      ),
+                                    ),
+                                    DataCell(
+                                      ConstrainedBox(
+                                        constraints: const BoxConstraints(maxWidth: 600), // Fixed width for Description
+                                        child: Text(
+                                          product.description ?? '',
+                                          style: const TextStyle(fontSize: 12), // Reduced font size
+                                        ),
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Container(
+                                        constraints: const BoxConstraints(maxWidth: 100),
+                                        padding: const EdgeInsets.all(8.0),
+                                        margin: const EdgeInsets.symmetric(vertical: 4.0),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue[100],
+                                          borderRadius: BorderRadius.circular(8.0),
+                                        ),
+                                        child: Text(
+                                          creationDate,
+                                          style: const TextStyle(fontSize: 12), // Reduced font size
+                                        ),
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Container(
+                                        constraints: const BoxConstraints(maxWidth: 100),
+                                        padding: const EdgeInsets.all(8.0),
+                                        margin: const EdgeInsets.symmetric(vertical: 4.0),
+                                        decoration: BoxDecoration(
+                                          color: Colors.green[100],
+                                          borderRadius: BorderRadius.circular(8.0),
+                                        ),
+                                        child: Text(
+                                          updateDate,
+                                          style: const TextStyle(fontSize: 12), // Reduced font size
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                  selected: state.selected[state.products.indexOf(product)],
+                                  onSelectChanged: (bool? value) {
+                                    notifier.setSelectedIndex(state.products.indexOf(product), value!);
+                                  },
+                                );
+                              }).toList(),
+                            ),
                           ),
-                          cells: <DataCell>[
-                            DataCell(Text(product.title)),
-                            DataCell(Text('\$${product.price.toString()}')),
-                            DataCell(Text(product.description ?? '')),
-                            DataCell(
-                              Container(
-                                padding: const EdgeInsets.all(8.0),
-                                margin: const EdgeInsets.symmetric(vertical: 4.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue[100],
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                child: Text(creationDate),
-                              ),
-                            ),
-                            DataCell(
-                              Container(
-                                padding: const EdgeInsets.all(8.0),
-                                margin: const EdgeInsets.symmetric(vertical: 4.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.green[100],
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                child: Text(updateDate),
-                              ),
-                            ),
-                          ],
-                          selected: state.selected[state.products.indexOf(product)],
-                          onSelectChanged: (bool? value) {
-                            notifier.setSelectedIndex(state.products.indexOf(product), value!);
-                          },
                         );
-                      }).toList(),
+                      },
                     ),
                   ),
                 ),

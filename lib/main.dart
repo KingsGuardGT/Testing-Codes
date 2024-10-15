@@ -1,3 +1,4 @@
+// main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
@@ -25,8 +26,21 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       title: title,
       theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
+        primarySwatch: Colors.grey,
         fontFamily: 'Poppins', // Set the default font family to Poppins
+        scaffoldBackgroundColor: Colors.grey[200], // Set the main background to greyish white
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.grey,
+          titleTextStyle: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.black),
+          bodyMedium: TextStyle(color: Colors.black),
+        ),
       ),
       home: const MainPage(),
     );
@@ -39,10 +53,9 @@ class MainPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: Colors.grey[200], // Set the main background to greyish white
       body: Row(
         children: [
-          SidebarWidget(),
+          const SidebarWidget(),
           Expanded(
             child: Container(
               color: Colors.white,
