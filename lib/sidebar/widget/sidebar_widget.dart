@@ -158,7 +158,7 @@ class SidebarWidget extends ConsumerWidget {
     final leading = Padding(
       padding: EdgeInsets.only(left: isCollapsed ? 0 : 16),
       child: Image.asset(
-        'lib/images/Vector1.png',
+        'lib/images/Logo.png',
         width: isCollapsed ? 30 : 40,
         height: isCollapsed ? 30 : 40,
         fit: BoxFit.contain,
@@ -167,22 +167,26 @@ class SidebarWidget extends ConsumerWidget {
 
     return isCollapsed
         ? leading
-        : SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          leading,
-          const SizedBox(width: 12),
-          const Expanded(
-            child: Text(
-              'Header Title',
-              style: TextStyle(fontSize: 18, color: Colors.black),
-              overflow: TextOverflow.ellipsis,
+        : ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.5),
+      child: SizedBox(
+        height: 60,
+        child: Row(
+          children: [
+            leading,
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'Testing',
+                style: TextStyle(fontSize: 18, color: Colors.black),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+
   }
 }

@@ -29,9 +29,9 @@ class MyApp extends ConsumerWidget {
         primarySwatch: Colors.grey,
         fontFamily: 'Poppins', // Set the default font family to Poppins
         scaffoldBackgroundColor: Colors.grey[200], // Set the main background to greyish white
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.grey,
-          titleTextStyle: TextStyle(
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.grey[200],
+          titleTextStyle: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
             color: Colors.black,

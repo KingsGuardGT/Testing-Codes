@@ -19,6 +19,7 @@ mixin _$TableState {
   List<Product> get products => throw _privateConstructorUsedError;
   List<bool> get selected => throw _privateConstructorUsedError;
   String get searchQuery => throw _privateConstructorUsedError;
+  bool get isLoading => throw _privateConstructorUsedError;
 
   /// Create a copy of TableState
   /// with the given fields replaced by the non-null parameter values.
@@ -33,7 +34,11 @@ abstract class $TableStateCopyWith<$Res> {
           TableState value, $Res Function(TableState) then) =
       _$TableStateCopyWithImpl<$Res, TableState>;
   @useResult
-  $Res call({List<Product> products, List<bool> selected, String searchQuery});
+  $Res call(
+      {List<Product> products,
+      List<bool> selected,
+      String searchQuery,
+      bool isLoading});
 }
 
 /// @nodoc
@@ -54,6 +59,7 @@ class _$TableStateCopyWithImpl<$Res, $Val extends TableState>
     Object? products = null,
     Object? selected = null,
     Object? searchQuery = null,
+    Object? isLoading = null,
   }) {
     return _then(_value.copyWith(
       products: null == products
@@ -68,6 +74,10 @@ class _$TableStateCopyWithImpl<$Res, $Val extends TableState>
           ? _value.searchQuery
           : searchQuery // ignore: cast_nullable_to_non_nullable
               as String,
+      isLoading: null == isLoading
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -80,7 +90,11 @@ abstract class _$$TableStateImplCopyWith<$Res>
       __$$TableStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<Product> products, List<bool> selected, String searchQuery});
+  $Res call(
+      {List<Product> products,
+      List<bool> selected,
+      String searchQuery,
+      bool isLoading});
 }
 
 /// @nodoc
@@ -99,6 +113,7 @@ class __$$TableStateImplCopyWithImpl<$Res>
     Object? products = null,
     Object? selected = null,
     Object? searchQuery = null,
+    Object? isLoading = null,
   }) {
     return _then(_$TableStateImpl(
       products: null == products
@@ -113,6 +128,10 @@ class __$$TableStateImplCopyWithImpl<$Res>
           ? _value.searchQuery
           : searchQuery // ignore: cast_nullable_to_non_nullable
               as String,
+      isLoading: null == isLoading
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -123,7 +142,8 @@ class _$TableStateImpl implements _TableState {
   const _$TableStateImpl(
       {final List<Product> products = const [],
       final List<bool> selected = const [],
-      this.searchQuery = ''})
+      this.searchQuery = '',
+      this.isLoading = false})
       : _products = products,
         _selected = selected;
 
@@ -148,10 +168,13 @@ class _$TableStateImpl implements _TableState {
   @override
   @JsonKey()
   final String searchQuery;
+  @override
+  @JsonKey()
+  final bool isLoading;
 
   @override
   String toString() {
-    return 'TableState(products: $products, selected: $selected, searchQuery: $searchQuery)';
+    return 'TableState(products: $products, selected: $selected, searchQuery: $searchQuery, isLoading: $isLoading)';
   }
 
   @override
@@ -162,7 +185,9 @@ class _$TableStateImpl implements _TableState {
             const DeepCollectionEquality().equals(other._products, _products) &&
             const DeepCollectionEquality().equals(other._selected, _selected) &&
             (identical(other.searchQuery, searchQuery) ||
-                other.searchQuery == searchQuery));
+                other.searchQuery == searchQuery) &&
+            (identical(other.isLoading, isLoading) ||
+                other.isLoading == isLoading));
   }
 
   @override
@@ -170,7 +195,8 @@ class _$TableStateImpl implements _TableState {
       runtimeType,
       const DeepCollectionEquality().hash(_products),
       const DeepCollectionEquality().hash(_selected),
-      searchQuery);
+      searchQuery,
+      isLoading);
 
   /// Create a copy of TableState
   /// with the given fields replaced by the non-null parameter values.
@@ -185,7 +211,8 @@ abstract class _TableState implements TableState {
   const factory _TableState(
       {final List<Product> products,
       final List<bool> selected,
-      final String searchQuery}) = _$TableStateImpl;
+      final String searchQuery,
+      final bool isLoading}) = _$TableStateImpl;
 
   @override
   List<Product> get products;
@@ -193,6 +220,8 @@ abstract class _TableState implements TableState {
   List<bool> get selected;
   @override
   String get searchQuery;
+  @override
+  bool get isLoading;
 
   /// Create a copy of TableState
   /// with the given fields replaced by the non-null parameter values.
