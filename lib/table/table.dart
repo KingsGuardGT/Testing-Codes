@@ -21,6 +21,7 @@ class CustomTableState extends ConsumerState<TableTesting> {
   final Map<int, bool> _expandedRows = {};
   final List<String> _filters = [];
   final ScrollController _scrollController = ScrollController();
+  bool _isSelectColumnSelected = false;
 
   late Future<void> _fetchDataFuture;
 
@@ -46,6 +47,16 @@ class CustomTableState extends ConsumerState<TableTesting> {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       ref.read(dataTableNotifierProvider.notifier).loadMoreProducts();
     }
+  }
+
+  void _toggleSelectColumn() {
+    setState(() {
+      _isSelectColumnSelected = !_isSelectColumnSelected;
+      final notifier = ref.read(dataTableNotifierProvider.notifier);
+      for (int i = 0; i < notifier.filteredProducts.length; i++) {
+        notifier.setSelectedIndex(i, _isSelectColumnSelected);
+      }
+    });
   }
 
   double _getDescriptionCellWidth(BuildContext context) {
@@ -257,6 +268,16 @@ class CustomTableState extends ConsumerState<TableTesting> {
                                     headingTextStyle: const TextStyle(color: Colors.black),
                                     columns: <DataColumn>[
                                       DataColumn(
+                                        label: GestureDetector(
+                                          onTap: _toggleSelectColumn,
+                                          child: Image.asset(
+                                            _isSelectColumnSelected ? 'lib/images/check.png' : 'lib/images/checkbox.png',
+                                            width: 24,
+                                            height: 24,
+                                          ),
+                                        ),
+                                      ),
+                                      DataColumn(
                                         label: ConstrainedBox(
                                           constraints: const BoxConstraints(maxWidth: 60),
                                           child: const Text(
@@ -321,29 +342,64 @@ class CustomTableState extends ConsumerState<TableTesting> {
                                         ),
                                         cells: <DataCell>[
                                           DataCell(
+                                            GestureDetector(
+                                              onTap: () {
+                                                bool newValue = !state.selected[state.products.indexOf(product)];
+                                                notifier.setSelectedIndex(state.products.indexOf(product), newValue);
+                                              },
+                                              child: Container(
+                                                color: state.selected[state.products.indexOf(product)]
+                                                    ? Colors.yellow.withOpacity(0.3)
+                                                    : Colors.transparent,
+                                                child: Image.asset(
+                                                  state.selected[state.products.indexOf(product)]
+                                                      ? 'lib/images/check.png'
+                                                      : 'lib/images/checkbox.png',
+                                                  width: 24,
+                                                  height: 24,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          DataCell(
                                             ConstrainedBox(
                                               constraints: const BoxConstraints(maxWidth: 150),
-                                              child: Text(
-                                                product.title,
-                                                style: const TextStyle(fontSize: 12),
+                                              child: Container(
+                                                color: state.selected[state.products.indexOf(product)]
+                                                    ? Colors.yellow.withOpacity(0.3)
+                                                    : Colors.transparent,
+                                                child: Text(
+                                                  product.title,
+                                                  style: const TextStyle(fontSize: 12),
+                                                ),
                                               ),
                                             ),
                                           ),
                                           DataCell(
                                             ConstrainedBox(
                                               constraints: const BoxConstraints(maxWidth: 100),
-                                              child: Text(
-                                                '\$${product.price.toString()}',
-                                                style: const TextStyle(fontSize: 12),
+                                              child: Container(
+                                                color: state.selected[state.products.indexOf(product)]
+                                                    ? Colors.yellow.withOpacity(0.3)
+                                                    : Colors.transparent,
+                                                child: Text(
+                                                  '\$${product.price.toString()}',
+                                                  style: const TextStyle(fontSize: 12),
+                                                ),
                                               ),
                                             ),
                                           ),
                                           DataCell(
                                             ConstrainedBox(
                                               constraints: BoxConstraints(maxWidth: _getDescriptionCellWidth(context)),
-                                              child: Text(
-                                                product.description ?? '',
-                                                style: const TextStyle(fontSize: 12),
+                                              child: Container(
+                                                color: state.selected[state.products.indexOf(product)]
+                                                    ? Colors.yellow.withOpacity(0.3)
+                                                    : Colors.transparent,
+                                                child: Text(
+                                                  product.description ?? '',
+                                                  style: const TextStyle(fontSize: 12),
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -353,7 +409,9 @@ class CustomTableState extends ConsumerState<TableTesting> {
                                               padding: const EdgeInsets.all(8.0),
                                               margin: const EdgeInsets.symmetric(vertical: 8.0),
                                               decoration: BoxDecoration(
-                                                color: Colors.blue[100],
+                                                color: state.selected[state.products.indexOf(product)]
+                                                    ? Colors.yellow.withOpacity(0.3)
+                                                    : Colors.blue[100],
                                                 borderRadius: BorderRadius.circular(30.0),
                                               ),
                                               child: Text(
@@ -368,7 +426,9 @@ class CustomTableState extends ConsumerState<TableTesting> {
                                               padding: const EdgeInsets.all(8.0),
                                               margin: const EdgeInsets.symmetric(vertical: 8.0),
                                               decoration: BoxDecoration(
-                                                color: Colors.green[100],
+                                                color: state.selected[state.products.indexOf(product)]
+                                                    ? Colors.yellow.withOpacity(0.3)
+                                                    : Colors.green[100],
                                                 borderRadius: BorderRadius.circular(30.0),
                                               ),
                                               child: Text(
@@ -378,10 +438,6 @@ class CustomTableState extends ConsumerState<TableTesting> {
                                             ),
                                           ),
                                         ],
-                                        selected: state.selected[state.products.indexOf(product)],
-                                        onSelectChanged: (bool? value) {
-                                          notifier.setSelectedIndex(state.products.indexOf(product), value!);
-                                        },
                                       );
                                     }).toList(),
                                   ),
